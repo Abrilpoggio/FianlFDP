@@ -1,0 +1,52 @@
+matriz = [[0 for col in range(40)] for fila in range(30)]
+
+print("Registro de datos de hasta 30 clientes:\n")
+i = 0
+seguir = "S"
+
+while i < 30 and seguir == "S":
+    print("Cliente", i + 1)
+
+    productos = int(input("  Total de productos comprados: "))
+    compras = int(input("  Cantidad de compras realizadas en el último mes: "))
+    gasto = float(input("  Valor total gastado en el último mes: "))
+
+    matriz[i][0] = productos
+    matriz[i][1] = compras
+    matriz[i][2] = gasto
+
+    if compras == 0:
+        matriz[i][3] = 0
+    else:
+        matriz[i][3] = gasto / compras
+
+    seguir = input("¿Desea ingresar otro cliente? (S/N): ")
+    
+    if seguir == "s":
+        seguir = "S"
+    elif seguir == "n":
+        seguir = "N"
+
+    i = i + 1
+
+total_clientes = i
+
+contador = 0
+for j in range(total_clientes):
+    if matriz[j][3] > 10000:
+        contador = contador + 1
+
+porcentaje = (contador * 100) / total_clientes
+
+print(" Porcentaje de clientes con promedio de gasto mayor a $10.000:", porcentaje, "%")
+
+mayor_gasto = matriz[0][2]
+fila_mayor = 0
+
+for j in range(1, total_clientes):
+    if matriz[j][2] > mayor_gasto:
+        mayor_gasto = matriz[j][2]
+        fila_mayor = j
+
+print("B) Cliente que más gastó en total: $", mayor_gasto)
+print("   Se encuentra en la fila:", fila_mayor)
