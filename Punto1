@@ -1,78 +1,121 @@
 MAX = 100
-desarrolladores = []
-cantidad = 0
+desarrolladores = [None] * MAX  
 
-seguir = "s"
 
-while seguir == "s" and cantidad < MAX:
+def cargar_un_desarrollador():
     nombre = input("Nombre completo: ")
-    
-    lenguaje = input("Lenguaje principal (Python, Javascript, C, Go): ")
-    while lenguaje not in ["Python", "Javascript", "C", "Go"]:
-        lenguaje = input("Lenguaje inválido. Reingrese (Python, Javascript, C, Go): ")
-        
+
+    lenguaje = input("Lenguaje principal (Python, JavaScript, C, Go): ")
+    while lenguaje != "Python" and lenguaje != "JavaScript" and lenguaje != "C" and lenguaje != "Go":
+        print("Lenguaje inválido. Debe ser: Python, JavaScript, C o Go.")
+        lenguaje = input("Lenguaje principal (Python, JavaScript, C, Go): ")
+
     pais = input("País de residencia: ")
+
     proyectos = int(input("Cantidad de proyectos finalizados: "))
+
     calificacion = float(input("Calificación promedio (1 a 5): "))
-    
-    desarrolladores.append([nombre, lenguaje, pais, proyectos, calificacion])
-    cantidad += 1
+    while calificacion < 1 or calificacion > 5:
+        print("Calificación inválida. Debe estar entre 1 y 5.")
+        calificacion = float(input("Calificación promedio (1 a 5): "))
 
-    seguir = input("¿Desea seguir cargando? (s/n): ")
+    return [nombre, lenguaje, pais, proyectos, calificacion]
 
+def cargar_datos(lista):
+    cantidad = 0
+    seguir = "s"
 
-total_calif = 0
-cantidad_py = 0
+    while seguir == "s":
+        if cantidad < MAX:
+            desarrollador = cargar_un_desarrollador()
+            lista[cantidad] = desarrollador
+            cantidad = cantidad + 1
+            seguir = input("¿Desea ingresar otro desarrollador? (s/n): ")
+        else:
+            print("Se alcanzó el máximo de desarrolladores.")
+            seguir = "n"
 
-for i in range(cantidad):
-    if desarrolladores[i][1] == "Python":
-        total_calif += desarrolladores[i][4]
-        cantidad_py += 1
+    return cantidad
+ 
+def promedio_calificacion_python(lista, cantidad):
+    suma = 0
+    contador = 0
+    i = 0
 
-if cantidad_py > 0:
-    promedio_py = total_calif / cantidad_py
-    print("\nCalificación promedio de desarrolladores Python:", round(promedio_py, 2))
-else:
-    print("\nNo hay desarrolladores con lenguaje principal Python.")
+    while i < cantidad:
+        desarrollador = lista[i]
+        if desarrollador[1] == "Python":
+            suma = suma + desarrollador[4]
+            contador = contador + 1
+        i = i + 1
 
-
-for i in range(cantidad - 1):
-    for j in range(i + 1, cantidad):
-        if (desarrolladores[i][2] > desarrolladores[j][2]) or \
-           (desarrolladores[i][2] == desarrolladores[j][2] and desarrolladores[i][0] > desarrolladores[j][0]):
-            aux = desarrolladores[i]
-            desarrolladores[i] = desarrolladores[j]
-            desarrolladores[j] = aux
-
-print("\nListado ordenado por país y nombre:")
-for i in range(cantidad):
-    print("Nombre:", desarrolladores[i][0], "| Lenguaje:", desarrolladores[i][1], "| País:", desarrolladores[i][2])
-
-
-for i in range(cantidad - 1):
-    for j in range(i + 1, cantidad):
-        if desarrolladores[i][0] > desarrolladores[j][0]:
-            aux = desarrolladores[i]
-            desarrolladores[i] = desarrolladores[j]
-            desarrolladores[j] = aux
-
-inicio = 0
-fin = cantidad - 1
-encontrado = False
-
-while inicio <= fin and not encontrado:
-    medio = (inicio + fin) // 2
-    if desarrolladores[medio][0] == "Ana Martinez":
-        encontrado = True
-    elif "Ana Martinez" < desarrolladores[medio][0]:
-        fin = medio - 1
+    if contador > 0:
+        promedio = suma / contador
+        print("\nPromedio de calificación de desarrolladores con Python:", promedio)
     else:
-        inicio = medio + 1
+        print("\nNo hay desarrolladores con lenguaje Python.")
 
-print()
-if encontrado:
-    print("La desarrolladora Ana Martinez está registrada.")
-    print("Lenguaje principal:", desarrolladores[medio][1])
-    print("País de residencia:", desarrolladores[medio][2])
-else:
-    print("La desarrolladora Ana Martinez no está registrada.")
+
+
+def mostrar_listado_ordenado(lista, cantidad):
+    i = 0
+    while i < cantidad - 1:
+        j = 0
+        while j < cantidad - 1 - i:
+           
+            if lista[j][2] > lista[j + 1][2]:
+                aux = lista[j]
+                lista[j] = lista[j + 1]
+                lista[j + 1] = aux
+            
+            elif lista[j][2] == lista[j + 1][2] and lista[j][0] > lista[j + 1][0]:
+                aux = lista[j]
+                lista[j] = lista[j + 1]
+                lista[j + 1] = aux
+            j = j + 1
+        i = i + 1
+
+
+    print("\n--- LISTADO ORDENADO ---")
+    k = 0
+    while k < cantidad:
+        desarrollador = lista[k]
+        print("Nombre:", desarrollador[0])
+        print("Lenguaje:", desarrollador[1])
+        print("País:", desarrollador[2])
+        print("Proyectos:", desarrollador[3])
+        print("Calificación:", desarrollador[4])
+        print("------------------------")
+        k = k + 1
+
+def buscar_por_nombre(lista, cantidad, nombre_buscado):
+    inicio = 0
+    fin = cantidad - 1
+    encontrado = False
+
+    while inicio <= fin and encontrado == False:
+        medio = (inicio + fin) // 2
+        nombre_actual = lista[medio][0]
+
+        if nombre_actual == nombre_buscado:
+            encontrado = True
+        elif nombre_buscado < nombre_actual:
+            fin = medio - 1
+        else:
+            inicio = inicio + 1  
+
+    if encontrado == True:
+        print("\n La desarrolladora", nombre_buscado, "está registrada.")
+    else:
+        print("\n La desarrolladora", nombre_buscado, "NO está registrada.")
+
+
+
+cantidad_cargados = cargar_datos(desarrolladores)
+
+promedio_calificacion_python(desarrolladores, cantidad_cargados)
+
+
+mostrar_listado_ordenado(desarrolladores, cantidad_cargados)
+
+buscar_por_nombre(desarrolladores, cantidad_cargados, "Ana Martinez")
